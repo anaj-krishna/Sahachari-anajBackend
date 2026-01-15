@@ -28,7 +28,7 @@ const OfferSchema = SchemaFactory.createForClass(Offer);
 
 @Schema({ timestamps: true })
 export class Product {
-  @Prop({ type: Types.ObjectId, ref: 'Store', required: true })
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   storeId: Types.ObjectId;
 
   @Prop({ required: true })

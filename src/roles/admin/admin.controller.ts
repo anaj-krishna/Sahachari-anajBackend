@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   UseGuards,
@@ -14,20 +15,18 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { ProductsService } from '../../products/products.service';
 import { CreateProductDto } from '../../products/dto/create-product.dto';
-import { OrdersService } from '../../orders/orders.service';
-import { OrderStatus } from '../../orders/order.schema';
+import { AddOfferDto } from '../../products/dto/add-offer.dto';
 
 @Controller('storekeeper')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.ADMIN)
 export class AdminController {
   constructor(
-    private readonly productsService: ProductsService,
-    private readonly ordersService: OrdersService,
+    private readonly productsService: ProductsService
   ) {}
 
-  // existing product route
-  @Post('add-products')
+  // ➕ ADD PRODUCT
+  @Post('products')
   addProduct(
     @Req() req: Request & { user: { userId: string } },
     @Body() dto: CreateProductDto,
@@ -35,21 +34,27 @@ export class AdminController {
     return this.productsService.create(req.user.userId, dto);
   }
 
-  // 🆕 get incoming orders
-  @Get('orders')
-  getOrders(@Req() req: Request & { user: { userId: string } }) {
-    return this.ordersService.findByStore(req.user.userId, OrderStatus.CREATED);
+  // 📦 GET PRODUCTS (WITH ACTIVE OFFERS)
+  @Get('products')
+  getProducts() {
+    return this.productsService.getAllProduct();
   }
 
-  // 🆕 accept order
-  @Post('orders/:id/accept')
-  acceptOrder(@Param('id') orderId: string) {
-    return this.ordersService.updateStatus(orderId, OrderStatus.ACCEPTED);
+  @Post('products/:id/offers')
+  addOffer(@Param('id') productId: string, @Body() dto: AddOfferDto) {
+    return this.productsService.addOffer(productId, {
+      ...dto,
+      startDate: dto.startDate ? new Date(dto.startDate) : undefined,
+      endDate: dto.endDate ? new Date(dto.endDate) : undefined,
+    });
   }
 
-  // 🆕 mark order ready
-  @Post('orders/:id/ready')
-  markReady(@Param('id') orderId: string) {
-    return this.ordersService.updateStatus(orderId, OrderStatus.READY);
+  // 🎯 GET OFFERS OF A PRODUCT
+  @Get('products/:id/offers')
+  getOffers(@Param('id') productId: string) {
+    return this.productsService.getOffers(productId);
   }
+
+  // 📥 GET INCOMING ORDERS
+ 
 }

@@ -1,8 +1,8 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Post, Get, Body, UseGuards, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { OrdersService } from '../../orders/orders.service';
-import { CreateOrderDto } from '../../orders/dto/create-order.dto';
+import { CartService } from '../../cart/cart.service';
 
 interface JwtUser {
   userId: string;
@@ -11,18 +11,29 @@ interface JwtUser {
 @Controller('customer')
 @UseGuards(JwtAuthGuard)
 export class CustomerController {
-  constructor(private readonly ordersService: OrdersService) {}
+  constructor(
+    private readonly cartService: CartService,
+  ) {}
 
-  @Post('orders')
-  createOrder(
+  // 🛒 ADD TO CART
+  @Post('cart')
+  addToCart(
     @Req() req: Request & { user: JwtUser },
-    @Body() dto: CreateOrderDto,
+    @Body() body: { productId: string; quantity: number },
   ) {
-    return this.ordersService.create(req.user.userId, dto);
+    return this.cartService.addToCart(
+      req.user.userId,
+      body.productId,
+      body.quantity,
+    );
   }
 
-  @Get('orders')
-  getMyOrders(@Req() req: Request & { user: JwtUser }) {
-    return this.ordersService.findByCustomer(req.user.userId);
+  // 🛒 GET CART
+  @Get('cart')
+  getCart(@Req() req: Request & { user: JwtUser }) {
+    return this.cartService.getCart(req.user.userId);
   }
+
+  // 📦 PLACE ORDER (from cart)
+ 
 }

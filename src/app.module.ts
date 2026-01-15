@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { ProductsModule } from './products/products.module';
 import { AdminModule } from './roles/admin/admin.module';
+import { CartModule } from './cart/cart.module';
+import { CustomerModule } from './roles/customer/customer.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { AdminModule } from './roles/admin/admin.module';
     CommonModule,
     AdminModule,
     ProductsModule,
+    CartModule,
+    CustomerModule,
   ],
 })
 export class AppModule {}
