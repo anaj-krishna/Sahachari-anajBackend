@@ -3,12 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Cart, CartDocument } from './cart.schema';
 import { AddToCartDto } from './dto/add-to-cart.dto';
+import { ProductsService } from '../products/products.service';
 
 @Injectable()
 export class CartService {
   constructor(
     @InjectModel(Cart.name)
     private readonly cartModel: Model<CartDocument>,
+    private readonly productsService: ProductsService,
   ) {}
 
   // GET CART
@@ -20,33 +22,49 @@ export class CartService {
     return cart || { userId, items: [] };
   }
 
-  // ADD ITEM TO CART
+  // ADD ITEM TO CART (with storeId from product)
   async addToCart(userId: string, dto: AddToCartDto) {
     const { productId, quantity } = dto;
 
-    // 1️⃣ Find cart
+    // 1️⃣ Get product to retrieve storeId
+    const product = await this.productsService.findById(productId);
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    // 2️⃣ Find cart
     let cart = await this.cartModel.findOne({ userId });
 
-    // 2️⃣ Create new cart if it doesn't exist
+    // 3️⃣ Create new cart if it doesn't exist
     if (!cart) {
       cart = await this.cartModel.create({
         userId,
-        items: [{ productId: new Types.ObjectId(productId), quantity }],
+        items: [
+          {
+            productId: new Types.ObjectId(productId),
+            storeId: product.storeId,
+            quantity,
+          },
+        ],
       });
       return cart;
     }
 
-    // 3️⃣ Check if item already exists in cart
+    // 4️⃣ Check if item already exists in cart
     const item = cart.items.find((i) => i.productId.toString() === productId);
 
     if (item) {
       // ✅ Update quantity
       item.quantity += quantity;
     } else {
-      // ✅ Add new CartItem subdocument
-      cart.items.push({ productId: new Types.ObjectId(productId), quantity });
+      // ✅ Add new CartItem subdocument with storeId
+      cart.items.push({
+        productId: new Types.ObjectId(productId),
+        storeId: product.storeId,
+        quantity,
+      });
     }
-    await cart.save(); // Important: save subdocuments
+    await cart.save();
     return cart;
   }
 

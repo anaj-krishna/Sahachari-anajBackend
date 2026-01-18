@@ -17,10 +17,39 @@ export class OrderItem {
 
 export const OrderItemSchema = SchemaFactory.createForClass(OrderItem);
 
+@Schema({ _id: false })
+export class DeliveryAddress {
+  @Prop({ required: true })
+  street: string;
+
+  @Prop({ required: true })
+  city: string;
+
+  @Prop({ required: true })
+  zipCode: string;
+
+  @Prop({ required: true })
+  phone: string;
+
+  @Prop({ required: false })
+  notes?: string;
+}
+
+const DeliveryAddressSchema = SchemaFactory.createForClass(DeliveryAddress);
+
 @Schema({ timestamps: true })
 export class Order {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  storeId: Types.ObjectId;
+
+  @Prop({ type: String, required: true })
+  checkoutId: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', default: null })
+  deliveryBoyId?: Types.ObjectId;
 
   @Prop({ type: [OrderItemSchema], required: true })
   items: OrderItem[];
@@ -28,8 +57,17 @@ export class Order {
   @Prop({ required: true })
   totalAmount: number;
 
+  @Prop({ type: DeliveryAddressSchema, required: true })
+  deliveryAddress: DeliveryAddress;
+
   @Prop({ default: 'PLACED' })
-  status: 'PLACED' | 'CANCELLED' | 'DELIVERED';
+  status:
+    | 'PLACED'
+    | 'ACCEPTED'
+    | 'REJECTED'
+    | 'READY'
+    | 'DELIVERED'
+    | 'CANCELLED';
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

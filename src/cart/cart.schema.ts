@@ -5,10 +5,13 @@ export type CartDocument = Cart & Document;
 
 @Schema()
 export class CartItem {
-  _id?: Types.ObjectId; // Add this line to match Mongoose subdocument behavior
+  _id?: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
   productId: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  storeId: Types.ObjectId;
 
   @Prop({ required: true })
   quantity: number;

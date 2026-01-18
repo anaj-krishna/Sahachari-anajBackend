@@ -6,6 +6,7 @@ import { CommonModule } from './common/common.module';
 import { ProductsModule } from './products/products.module';
 import { CartModule } from './cart/cart.module';
 import { CustomerModule } from './roles/customer/customer.module';
+import { StorekeeperModule } from './roles/storekeeper/storekeeper.module';
 
 @Module({
   imports: [
@@ -13,10 +14,10 @@ import { CustomerModule } from './roles/customer/customer.module';
     UsersModule,
     AuthModule,
     CommonModule,
-    // AdminModule,
     ProductsModule,
     CartModule,
     CustomerModule,
+    StorekeeperModule,
   ],
 })
 export class AppModule {}

@@ -21,6 +21,7 @@ import { CartService } from '../../cart/cart.service';
 import { OrdersService } from '../../orders/orders.service';
 
 import { AddToCartDto } from '../../cart/dto/add-to-cart.dto';
+import { PlaceOrderDto } from '../../orders/dto/place-order.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.USER)
@@ -83,8 +84,11 @@ export class CustomerController {
   /* ================= ORDERS ================= */
 
   @Post('orders')
-  placeOrder(@Req() req: Request & { user: { userId: string } }) {
-    return this.ordersService.placeOrder(req.user.userId);
+  placeOrder(
+    @Req() req: Request & { user: { userId: string } },
+    @Body() dto: PlaceOrderDto,
+  ) {
+    return this.ordersService.placeOrder(req.user.userId, dto);
   }
 
   @Get('orders')
