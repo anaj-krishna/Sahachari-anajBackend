@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 import { CustomerController } from './customer.controller';
-import { CommonModule } from '../../common/common.module';
-import { CartModule } from 'src/cart/cart.module';
+import { CartModule } from '../../cart/cart.module';
+import { OrdersModule } from '../../orders/orders.module';
+import { UsersModule } from '../../users/users.module';
+import { ProductsModule } from '../../products/products.module';
 
 @Module({
-  imports: [CommonModule, CartModule],
+  imports: [ProductsModule, CartModule, OrdersModule, UsersModule],
   controllers: [CustomerController],
+  providers: [], // optional: if you want a facade service for customer
 })
 export class CustomerModule {}

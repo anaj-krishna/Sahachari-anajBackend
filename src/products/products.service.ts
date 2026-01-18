@@ -3,6 +3,31 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Product, ProductDocument, DiscountType } from './product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
+import { AddOfferDto } from './dto/add-offer.dto';
+
+/* ================= LEAN TYPES ================= */
+
+type LeanOffer = {
+  type: DiscountType;
+  value: number;
+  isActive: boolean;
+  startDate?: Date;
+  endDate?: Date;
+};
+
+type LeanProduct = {
+  _id: Types.ObjectId;
+  storeId: Types.ObjectId;
+  name: string;
+  description?: string;
+  images?: string[];
+  quantity: number;
+  price: number;
+  category?: string;
+  offers: LeanOffer[];
+};
+
+/* ================= SERVICE ================= */
 
 @Injectable()
 export class ProductsService {
@@ -11,7 +36,8 @@ export class ProductsService {
     private readonly productModel: Model<ProductDocument>,
   ) {}
 
-  // CREATE PRODUCT
+  /* ========== STORE (ADMIN = STOREKEEPER) ========== */
+
   async create(storeId: string, dto: CreateProductDto) {
     return this.productModel.create({
       ...dto,
@@ -19,60 +45,24 @@ export class ProductsService {
     });
   }
 
-  // GET PRODUCT BY ID
-  async findById(id: string) {
-    const product = await this.productModel.findById(id);
-    if (!product) throw new NotFoundException('Product not found');
-    return product;
-  }
-
-  async getAllProduct() {
-    const product = await this.productModel.find({});
-    if (!product) throw new NotFoundException('Product not found');
-    return product;
-  }
-  // 🔥 GET PRODUCTS WITH ACTIVE OFFERS
-  async findAllWithOffers() {
-    const now = new Date();
-
-    const products = await this.productModel.find({
-      offers: {
-        $elemMatch: {
-          isActive: true,
-          $or: [
-            { startDate: { $lte: now }, endDate: { $gte: now } },
-            { startDate: null, endDate: null },
-          ],
-        },
-      },
+  async getStoreProductById(storeId: string, productId: string) {
+    const product = await this.productModel.findOne({
+      _id: productId,
+      storeId: new Types.ObjectId(storeId),
     });
 
-    return products.map((p) => ({
-      ...p.toObject(),
-      finalPrice: this.calculateFinalPrice(p),
-    }));
+    if (!product) throw new NotFoundException('Product not found');
+    return product;
   }
 
-  // ➕ ADD OFFER TO PRODUCT
-  async addOffer(
+  async updateProduct(
+    storeId: string,
     productId: string,
-    offer: {
-      type: DiscountType;
-      value: number;
-      startDate?: Date;
-      endDate?: Date;
-    },
+    dto: Partial<CreateProductDto>,
   ) {
-    const product = await this.productModel.findByIdAndUpdate(
-      productId,
-      {
-        $push: {
-          offers: {
-            ...offer,
-            isActive: true,
-          },
-        },
-      },
+    const product = await this.productModel.findOneAndUpdate(
+      { _id: productId, storeId: new Types.ObjectId(storeId) },
+      dto,
       { new: true },
     );
 
@@ -80,25 +70,106 @@ export class ProductsService {
     return product;
   }
 
-  // 📦 GET OFFERS OF A PRODUCT
-  async getOffers(productId: string) {
-    const product = await this.productModel.findById(productId, {
-      offers: 1,
+  async deleteProduct(storeId: string, productId: string) {
+    const product = await this.productModel.findOneAndDelete({
+      _id: productId,
+      storeId: new Types.ObjectId(storeId),
     });
 
     if (!product) throw new NotFoundException('Product not found');
-    return product.offers;
+    return { message: 'Product deleted successfully' };
   }
 
-  // 💰 FINAL PRICE CALCULATION
-  private calculateFinalPrice(product: ProductDocument): number {
+  async updateStock(storeId: string, productId: string, quantity: number) {
+    const product = await this.productModel.findOneAndUpdate(
+      { _id: productId, storeId: new Types.ObjectId(storeId) },
+      { quantity },
+      { new: true },
+    );
+
+    if (!product) throw new NotFoundException('Product not found');
+    return product;
+  }
+
+  async addOffer(productId: string, dto: AddOfferDto) {
+    const offer: LeanOffer = {
+      type: dto.type,
+      value: dto.value,
+      isActive: true,
+      startDate: dto.startDate ? new Date(dto.startDate) : undefined,
+      endDate: dto.endDate ? new Date(dto.endDate) : undefined,
+    };
+
+    const product = await this.productModel.findByIdAndUpdate(
+      productId,
+      { $push: { offers: offer } },
+      { new: true },
+    );
+
+    if (!product) throw new NotFoundException('Product not found');
+    return product;
+  }
+
+  /* ================= CUSTOMER ================= */
+
+  async findById(id: string) {
+    const product = await this.productModel.findById(id).lean<LeanProduct>();
+
+    if (!product) throw new NotFoundException('Product not found');
+
+    return {
+      ...product,
+      finalPrice: this.calculateFinalPrice(product),
+    };
+  }
+
+  async findAll(filters?: { search?: string; category?: string }) {
+    const query: Record<string, unknown> = {};
+
+    if (filters?.search) {
+      query['name'] = { $regex: filters.search, $options: 'i' };
+    }
+
+    if (filters?.category) {
+      query['category'] = filters.category;
+    }
+
+    const products = await this.productModel.find(query).lean<LeanProduct[]>();
+
+    return products.map((product) => ({
+      ...product,
+      finalPrice: this.calculateFinalPrice(product),
+    }));
+  }
+
+  async getStores() {
+    return this.productModel.distinct('storeId');
+  }
+
+  /**
+   * SINGLE SOURCE OF TRUTH
+   * Used by BOTH customer & store/admin
+   */
+  async getProductsByStore(storeId: string) {
+    return this.productModel
+      .find({ storeId: new Types.ObjectId(storeId) })
+      .lean<LeanProduct[]>();
+  }
+
+  /* ================= HELPERS ================= */
+
+  private calculateFinalPrice(product: LeanProduct): number {
+    if (!product.offers || product.offers.length === 0) {
+      return product.price;
+    }
+
     const now = new Date();
 
     const activeOffer = product.offers.find(
-      (o) =>
-        o.isActive &&
-        (!o.startDate || o.startDate <= now) &&
-        (!o.endDate || o.endDate >= now),
+      (offer) =>
+        offer.isActive &&
+        (!offer.startDate || offer.startDate <= now) &&
+        (!offer.endDate || offer.endDate >= now),
     );
 
     if (!activeOffer) return product.price;

@@ -4,7 +4,6 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { ProductsModule } from './products/products.module';
-import { AdminModule } from './roles/admin/admin.module';
 import { CartModule } from './cart/cart.module';
 import { CustomerModule } from './roles/customer/customer.module';
 
@@ -14,7 +13,7 @@ import { CustomerModule } from './roles/customer/customer.module';
     UsersModule,
     AuthModule,
     CommonModule,
-    AdminModule,
+    // AdminModule,
     ProductsModule,
     CartModule,
     CustomerModule,

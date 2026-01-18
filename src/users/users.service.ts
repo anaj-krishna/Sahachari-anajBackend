@@ -55,4 +55,16 @@ export class UsersService {
   async findWithPassword(email: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ email }).select('+password').exec();
   }
+  // GET USER PROFILE
+  async getById(userId: string) {
+    return this.userModel.findById(userId).select('-password').exec();
+  }
+
+  // UPDATE PROFILE
+  async updateProfile(userId: string, body: Partial<User>) {
+    return this.userModel
+      .findByIdAndUpdate(userId, body, { new: true })
+      .select('-password')
+      .exec();
+  }
 }

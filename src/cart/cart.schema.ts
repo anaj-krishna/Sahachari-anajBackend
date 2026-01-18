@@ -3,21 +3,23 @@ import { Document, Types } from 'mongoose';
 
 export type CartDocument = Cart & Document;
 
-@Schema({ timestamps: true })
+@Schema()
 export class CartItem {
+  _id?: Types.ObjectId; // Add this line to match Mongoose subdocument behavior
+
   @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
   productId: Types.ObjectId;
 
-  @Prop({ required: true, min: 1 })
+  @Prop({ required: true })
   quantity: number;
 }
 
-const CartItemSchema = SchemaFactory.createForClass(CartItem);
+export const CartItemSchema = SchemaFactory.createForClass(CartItem);
 
 @Schema({ timestamps: true })
 export class Cart {
   @Prop({ type: Types.ObjectId, ref: 'User', unique: true, required: true })
-  customerId: Types.ObjectId;
+  userId: Types.ObjectId;
 
   @Prop({ type: [CartItemSchema], default: [] })
   items: CartItem[];

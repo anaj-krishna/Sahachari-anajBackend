@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Role } from '../common/enums/role.enum';
 import { AccountStatus } from '../common/enums/account-status.enum';
 
@@ -27,6 +27,9 @@ export class User {
 
   @Prop({ default: false })
   isVerified: boolean;
+
+  @Prop({ type: Types.ObjectId, ref: 'Store', required: false })
+  storeId?: Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

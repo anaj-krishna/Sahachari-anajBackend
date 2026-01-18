@@ -49,7 +49,6 @@ export class Product {
   @Prop()
   category?: string;
 
-  // 🔥 OFFERS
   @Prop({ type: [OfferSchema], default: [] })
   offers: Offer[];
 }
