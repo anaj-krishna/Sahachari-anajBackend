@@ -55,19 +55,18 @@ export class ProductsService {
     return product;
   }
 
-  async updateProduct(
-    storeId: string,
-    productId: string,
-    dto: Partial<CreateProductDto>,
-  ) {
-    const product = await this.productModel.findOneAndUpdate(
-      { _id: productId, storeId: new Types.ObjectId(storeId) },
-      dto,
-      { new: true },
+  async updateProduct(storeId: string, productId: string, dto: any) {
+    const updatedProduct = await this.productModel.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(productId),
+        storeId: new Types.ObjectId(storeId),
+      },
+      { $set: dto },
+      { new: true, runValidators: true },
     );
 
-    if (!product) throw new NotFoundException('Product not found');
-    return product;
+    if (!updatedProduct) throw new NotFoundException('Product not found');
+    return updatedProduct;
   }
 
   async deleteProduct(storeId: string, productId: string) {
@@ -83,8 +82,8 @@ export class ProductsService {
   async updateStock(storeId: string, productId: string, quantity: number) {
     const product = await this.productModel.findOneAndUpdate(
       { _id: productId, storeId: new Types.ObjectId(storeId) },
-      { quantity },
-      { new: true },
+      { $set: { quantity } },
+      { new: true, runValidators: true },
     );
 
     if (!product) throw new NotFoundException('Product not found');

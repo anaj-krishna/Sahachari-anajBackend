@@ -1,10 +1,52 @@
 # 📦 STOREKEEPER API DOCUMENTATION
 
 ## 📋 Table of Contents
-1. [Products Management](#products-management)
-2. [Orders Management](#orders-management)
-3. [Order Actions](#order-actions)
-4. [Delivery Assignment](#delivery-assignment)
+1. [Authentication](#authentication)
+2. [Products Management](#products-management)
+3. [Orders Management](#orders-management)
+4. [Order Actions](#order-actions)
+5. [Delivery Assignment](#delivery-assignment)
+
+---
+
+## 🔐 Authentication
+
+### Admin Registration
+**Endpoint:** `POST /auth/register`
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "name": "ABCG",
+  "email": "abc@store.com",
+  "password": "123456",
+  "role": "ADMIN"
+}
+```
+
+**Response:** `201 Created`
+```json
+{
+  "id": "696dc7c4d941d2c9a8f56e4d",
+  "email": "abc@store.com",
+  "role": "ADMIN",
+  "status": "PENDING"
+}
+```
+
+**Validation:**
+- `name`: Required, string
+- `email`: Required, valid email format
+- `password`: Required, string (minimum 6 characters)
+- `role`: Required, must be "ADMIN" for storekeeper registration
+
+**Status Description:**
+- `PENDING`: Account created but awaiting superadmin approval
 
 ---
 
@@ -560,14 +602,14 @@ PLACED (Order received)
 
 ---
 
-## 🔐 Authentication
+## JWT Token Usage
 
-All storekeeper endpoints require:
+All protected storekeeper endpoints require:
 ```
 Authorization: Bearer <jwt_token>
 ```
 
-**Required Role:** `STOREKEEPER`
+**Required Role:** `ADMIN` or `STOREKEEPER`
 
 ---
 
