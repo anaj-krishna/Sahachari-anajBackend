@@ -66,7 +66,9 @@ export class Order {
     | 'ACCEPTED'
     | 'REJECTED'
     | 'READY'
+    | 'PICKED_UP'
     | 'DELIVERED'
+    | 'FAILED'
     | 'CANCELLED';
 }
 

@@ -286,4 +286,146 @@ export class OrdersService {
 
     return order;
   }
+
+  /* ================= DELIVERY BOY OPERATIONS ================= */
+
+  // GET AVAILABLE JOBS (status = READY, no deliveryBoyId assigned)
+  async getAvailableJobs() {
+    return this.orderModel
+      .find({
+        status: 'READY',
+        deliveryBoyId: null,
+      })
+      .populate('items.productId')
+      .populate('userId', 'name phone')
+      .populate('storeId', 'name address phone')
+      .sort({ createdAt: -1 });
+  }
+
+  // GET MY JOBS (assigned to delivery boy)
+  async getMyJobs(deliveryBoyId: string) {
+    return this.orderModel
+      .find({
+        deliveryBoyId: new Types.ObjectId(deliveryBoyId),
+        status: { $in: ['ACCEPTED', 'PICKED_UP', 'DELIVERED', 'FAILED'] },
+      })
+      .populate('items.productId')
+      .populate('userId', 'name phone email')
+      .populate('storeId', 'name address phone')
+      .sort({ createdAt: -1 });
+  }
+
+  // GET SINGLE ORDER FOR DELIVERY BOY
+  async getDeliveryOrderById(deliveryBoyId: string, orderId: string) {
+    const order = await this.orderModel
+      .findOne({
+        _id: orderId,
+        deliveryBoyId: new Types.ObjectId(deliveryBoyId),
+      })
+      .populate('items.productId')
+      .populate('userId', 'name phone email')
+      .populate('storeId', 'name address phone')
+      .populate('deliveryBoyId', 'name phone');
+
+    if (!order) {
+      throw new NotFoundException('Order not found or not assigned to you');
+    }
+
+    return order;
+  }
+
+  // ACCEPT JOB (READY → ACCEPTED, assign deliveryBoyId)
+  async acceptJob(deliveryBoyId: string, orderId: string) {
+    const order = await this.orderModel.findOneAndUpdate(
+      {
+        _id: orderId,
+        status: 'READY',
+        deliveryBoyId: null,
+      },
+      {
+        $set: {
+          status: 'ACCEPTED',
+          deliveryBoyId: new Types.ObjectId(deliveryBoyId),
+        },
+      },
+      { new: true },
+    );
+
+    if (!order) {
+      throw new NotFoundException(
+        'Order not found, already assigned, or not in READY status',
+      );
+    }
+
+    return order;
+  }
+
+  // PICKUP (ACCEPTED → PICKED_UP)
+  async pickupOrder(deliveryBoyId: string, orderId: string) {
+    const order = await this.orderModel.findOneAndUpdate(
+      {
+        _id: orderId,
+        deliveryBoyId: new Types.ObjectId(deliveryBoyId),
+        status: 'ACCEPTED',
+      },
+      {
+        $set: { status: 'PICKED_UP' },
+      },
+      { new: true },
+    );
+
+    if (!order) {
+      throw new NotFoundException(
+        'Order not found, not assigned to you, or not in ACCEPTED status',
+      );
+    }
+
+    return order;
+  }
+
+  // DELIVER (PICKED_UP → DELIVERED)
+  async deliverOrder(deliveryBoyId: string, orderId: string) {
+    const order = await this.orderModel.findOneAndUpdate(
+      {
+        _id: orderId,
+        deliveryBoyId: new Types.ObjectId(deliveryBoyId),
+        status: 'PICKED_UP',
+      },
+      {
+        $set: { status: 'DELIVERED' },
+      },
+      { new: true },
+    );
+
+    if (!order) {
+      throw new NotFoundException(
+        'Order not found, not assigned to you, or not in PICKED_UP status',
+      );
+    }
+
+    return order;
+  }
+
+  // FAIL DELIVERY (PICKED_UP → FAILED)
+  async failDelivery(deliveryBoyId: string, orderId: string) {
+    const order = await this.orderModel.findOneAndUpdate(
+      {
+        _id: orderId,
+        deliveryBoyId: new Types.ObjectId(deliveryBoyId),
+        status: 'PICKED_UP',
+      },
+      {
+        $set: { status: 'FAILED' },
+      },
+      { new: true },
+    );
+
+    if (!order) {
+      throw new NotFoundException(
+        'Order not found, not assigned to you, or not in PICKED_UP status',
+      );
+    }
+
+    return order;
+  }
 }
