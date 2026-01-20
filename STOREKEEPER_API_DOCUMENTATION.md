@@ -12,7 +12,7 @@
 ## 🔐 Authentication
 
 ### Admin Registration
-**Endpoint:** `POST /auth/register`
+**Endpoint:** `POST http://localhost:3000/auth/register/storekeeper`
 
 **Headers:**
 ```

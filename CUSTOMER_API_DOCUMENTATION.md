@@ -12,7 +12,7 @@
 ## Authentication
 
 ### 1. Register (Customer)
-**Endpoint:** `POST /auth/register`
+**Endpoint:** `POST /auth/register/customer`
 
 **Headers:**
 ```
@@ -31,7 +31,6 @@ Content-Type: application/json
 **Response:** `201 Created`
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "user": {
     "userId": "user_id_123",
     "email": "john@example.com",
