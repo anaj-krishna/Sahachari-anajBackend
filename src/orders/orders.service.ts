@@ -261,32 +261,6 @@ export class OrdersService {
       message: 'Delivery boy list not yet configured',
     };
   }
-
-  // ASSIGN DELIVERY BOY TO ORDER
-  async assignDelivery(
-    storeId: string,
-    orderId: string,
-    deliveryBoyId: string,
-  ) {
-    const order = await this.orderModel.findOneAndUpdate(
-      {
-        _id: orderId,
-        storeId: new Types.ObjectId(storeId),
-        status: 'READY',
-      },
-      {
-        $set: { deliveryBoyId: new Types.ObjectId(deliveryBoyId) },
-      },
-      { new: true },
-    );
-
-    if (!order) {
-      throw new NotFoundException('Order not found or not in READY status');
-    }
-
-    return order;
-  }
-
   /* ================= DELIVERY BOY OPERATIONS ================= */
 
   // GET AVAILABLE JOBS (status = READY, no deliveryBoyId assigned)
@@ -405,7 +379,6 @@ export class OrdersService {
 
     return order;
   }
-
   // FAIL DELIVERY (PICKED_UP → FAILED)
   async failDelivery(deliveryBoyId: string, orderId: string) {
     const order = await this.orderModel.findOneAndUpdate(
@@ -419,13 +392,11 @@ export class OrdersService {
       },
       { new: true },
     );
-
     if (!order) {
       throw new NotFoundException(
         'Order not found, not assigned to you, or not in PICKED_UP status',
       );
     }
-
     return order;
   }
 }

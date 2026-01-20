@@ -24,7 +24,6 @@ import { OrdersService } from '../../orders/orders.service';
 import { CreateProductDto } from '../../products/dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
-import { AssignDeliveryDto } from './dto/assign-delivery.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.ADMIN)
@@ -142,19 +141,6 @@ export class StorekeeperController {
     return this.ordersService.getAvailableDeliveryBoys(
       req.user.userId,
       orderId,
-    );
-  }
-
-  @Post('orders/:id/assign-delivery')
-  assignDelivery(
-    @Req() req: Request & { user: { userId: string } },
-    @Param('id') orderId: string,
-    @Body() dto: AssignDeliveryDto,
-  ) {
-    return this.ordersService.assignDelivery(
-      req.user.userId,
-      orderId,
-      dto.deliveryBoyId,
     );
   }
 }
