@@ -1,4 +1,12 @@
-import { IsString, IsEmail, MinLength } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  MinLength,
+  IsArray,
+  IsEnum,
+  ArrayNotEmpty,
+} from 'class-validator';
+import { Role } from '../../common/enums/role.enum';
 
 export class RegisterDto {
   @IsString()
@@ -8,6 +16,17 @@ export class RegisterDto {
   email: string;
 
   @IsString()
+  shopAddress: string;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  serviceablePincodes: string[];
+
+  @IsString()
   @MinLength(6)
   password: string;
+
+  @IsEnum(Role)
+  role: Role; // USER | ADMIN | DELIVERY
 }

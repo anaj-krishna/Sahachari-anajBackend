@@ -19,6 +19,12 @@ export class User {
   @Prop({ enum: Role, required: true })
   role: Role;
 
+  @Prop({ required: true })
+  address: string;
+
+  @Prop({ type: [String], required: true })
+  serviceablePincodes: string[];
+
   @Prop({
     enum: AccountStatus,
     default: AccountStatus.PENDING,

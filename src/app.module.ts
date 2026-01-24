@@ -8,6 +8,7 @@ import { CartModule } from './cart/cart.module';
 import { CustomerModule } from './roles/customer/customer.module';
 import { StorekeeperModule } from './roles/storekeeper/storekeeper.module';
 import { DeliveryModule } from './roles/delivery/delivery.module';
+import { S3Module } from './s3/s3.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { DeliveryModule } from './roles/delivery/delivery.module';
     CustomerModule,
     StorekeeperModule,
     DeliveryModule,
+    S3Module,
   ],
 })
 export class AppModule {}
