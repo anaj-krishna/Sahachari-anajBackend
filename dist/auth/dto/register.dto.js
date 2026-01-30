@@ -15,7 +15,7 @@ const role_enum_1 = require("../../common/enums/role.enum");
 class RegisterDto {
     name;
     email;
-    shopAddress;
+    address;
     serviceablePincodes;
     password;
     role;
@@ -32,7 +32,9 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], RegisterDto.prototype, "shopAddress", void 0);
+
+], RegisterDto.prototype, "address", void 0);
+
 __decorate([
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.ArrayNotEmpty)(),

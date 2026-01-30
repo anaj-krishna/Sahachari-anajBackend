@@ -16,7 +16,7 @@ export class RegisterDto {
   email: string;
 
   @IsString()
-  shopAddress: string;
+  address: string;
 
   @IsArray()
   @ArrayNotEmpty()
