@@ -70,7 +70,7 @@ let AuthService = class AuthService {
             password: dto.password,
             role: dto.role,
             status,
-            address: dto.shopAddress,
+            address: dto.address,
             serviceablePincodes: dto.serviceablePincodes,
         });
         return {
