@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -28,7 +29,6 @@ type LeanProduct = {
 };
 
 /* ================= SERVICE ================= */
-
 @Injectable()
 export class ProductsService {
   constructor(
@@ -37,7 +37,6 @@ export class ProductsService {
   ) {}
 
   /* ========== STORE (ADMIN = STOREKEEPER) ========== */
-
   async create(storeId: string, dto: CreateProductDto) {
     return this.productModel.create({
       ...dto,
@@ -50,7 +49,6 @@ export class ProductsService {
       _id: productId,
       storeId: new Types.ObjectId(storeId),
     });
-
     if (!product) throw new NotFoundException('Product not found');
     return product;
   }
@@ -64,7 +62,6 @@ export class ProductsService {
       { $set: dto },
       { new: true, runValidators: true },
     );
-
     if (!updatedProduct) throw new NotFoundException('Product not found');
     return updatedProduct;
   }
@@ -74,7 +71,6 @@ export class ProductsService {
       _id: productId,
       storeId: new Types.ObjectId(storeId),
     });
-
     if (!product) throw new NotFoundException('Product not found');
     return { message: 'Product deleted successfully' };
   }
@@ -85,7 +81,6 @@ export class ProductsService {
       { $set: { quantity } },
       { new: true, runValidators: true },
     );
-
     if (!product) throw new NotFoundException('Product not found');
     return product;
   }
@@ -98,24 +93,19 @@ export class ProductsService {
       startDate: dto.startDate ? new Date(dto.startDate) : undefined,
       endDate: dto.endDate ? new Date(dto.endDate) : undefined,
     };
-
     const product = await this.productModel.findByIdAndUpdate(
       productId,
       { $push: { offers: offer } },
       { new: true },
     );
-
     if (!product) throw new NotFoundException('Product not found');
     return product;
   }
 
   /* ================= CUSTOMER ================= */
-
   async findById(id: string) {
     const product = await this.productModel.findById(id).lean<LeanProduct>();
-
     if (!product) throw new NotFoundException('Product not found');
-
     return {
       ...product,
       finalPrice: this.calculateFinalPrice(product),
@@ -124,17 +114,13 @@ export class ProductsService {
 
   async findAll(filters?: { search?: string; category?: string }) {
     const query: Record<string, unknown> = {};
-
     if (filters?.search) {
       query['name'] = { $regex: filters.search, $options: 'i' };
     }
-
     if (filters?.category) {
       query['category'] = filters.category;
     }
-
     const products = await this.productModel.find(query).lean<LeanProduct[]>();
-
     return products.map((product) => ({
       ...product,
       finalPrice: this.calculateFinalPrice(product),
