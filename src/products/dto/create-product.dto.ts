@@ -15,7 +15,7 @@ export class CreateProductDto {
   @IsNumber()
   quantity: number;
 
-  @IsNumber()
+  @IsString()
   price: string;
 
   @IsOptional()
