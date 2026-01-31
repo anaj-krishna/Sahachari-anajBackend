@@ -36,6 +36,12 @@ export class User {
 
   @Prop({ type: Types.ObjectId, ref: 'Store', required: false })
   storeId?: Types.ObjectId;
+
+  @Prop({ required: false }) // Optional
+  address2?: string;
+
+  @Prop({ required: false }) // Optional
+  mobileNumber?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

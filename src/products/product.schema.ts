@@ -44,7 +44,7 @@ export class Product {
   quantity: number;
 
   @Prop({ required: true })
-  price: number;
+  price: string;
 
   @Prop()
   category?: string;

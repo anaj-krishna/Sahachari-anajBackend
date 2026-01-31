@@ -9,57 +9,34 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RegisterDto = void 0;
+exports.UpdateLocationDto = void 0;
 const class_validator_1 = require("class-validator");
-const role_enum_1 = require("../../common/enums/role.enum");
-class RegisterDto {
-    name;
-    email;
+class UpdateLocationDto {
     address;
-    serviceablePincodes;
-    password;
-    role;
     address2;
     mobileNumber;
+    serviceablePincodes;
 }
-exports.RegisterDto = RegisterDto;
+exports.UpdateLocationDto = UpdateLocationDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], RegisterDto.prototype, "name", void 0);
+], UpdateLocationDto.prototype, "address", void 0);
 __decorate([
-    (0, class_validator_1.IsEmail)(),
-    __metadata("design:type", String)
-], RegisterDto.prototype, "email", void 0);
-__decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-
-], RegisterDto.prototype, "address", void 0);
-
+], UpdateLocationDto.prototype, "address2", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateLocationDto.prototype, "mobileNumber", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.ArrayNotEmpty)(),
     (0, class_validator_1.IsString)({ each: true }),
     __metadata("design:type", Array)
-], RegisterDto.prototype, "serviceablePincodes", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(6),
-    __metadata("design:type", String)
-], RegisterDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsEnum)(role_enum_1.Role),
-    __metadata("design:type", String)
-], RegisterDto.prototype, "role", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], RegisterDto.prototype, "address2", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], RegisterDto.prototype, "mobileNumber", void 0);
-//# sourceMappingURL=register.dto.js.map
+], UpdateLocationDto.prototype, "serviceablePincodes", void 0);
+//# sourceMappingURL=UpdateLocationDto.js.map

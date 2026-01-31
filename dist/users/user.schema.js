@@ -24,6 +24,8 @@ let User = class User {
     status;
     isVerified;
     storeId;
+    address2;
+    mobileNumber;
 };
 exports.User = User;
 __decorate([
@@ -65,6 +67,14 @@ __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Store', required: false }),
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], User.prototype, "storeId", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: false }),
+    __metadata("design:type", String)
+], User.prototype, "address2", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: false }),
+    __metadata("design:type", String)
+], User.prototype, "mobileNumber", void 0);
 exports.User = User = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], User);

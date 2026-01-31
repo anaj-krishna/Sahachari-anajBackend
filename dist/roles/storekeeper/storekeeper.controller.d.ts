@@ -30,7 +30,7 @@ export declare class StorekeeperController {
         description?: string;
         images?: string[];
         quantity: number;
-        price: number;
+        price: string;
         category?: string;
         offers: {
             type: import("../../products/product.schema").DiscountType;

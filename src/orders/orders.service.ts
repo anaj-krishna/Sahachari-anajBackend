@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Injectable,
   BadRequestException,
@@ -48,22 +49,26 @@ export class OrdersService {
       const orderItems: OrderItem[] = [];
 
       // Build order items for this store
-      for (const item of items) {
-        const product = await this.productModel.findById(item.productId);
-        if (!product) {
-          throw new NotFoundException(
-            `Product ${item.productId.toString()} not found`,
-          );
-        }
+     for (const item of items) {
+  const product = await this.productModel.findById(item.productId);
 
-        orderItems.push({
-          productId: product._id,
-          quantity: item.quantity,
-          price: product.price,
-        });
+  if (!product) {
+    throw new NotFoundException(
+      `Product ${item.productId.toString()} not found`,
+    );
+  }
 
-        storeTotal += product.price * item.quantity;
-      }
+  const numericPrice = Number(String(product.price).replace(/[^0-9.]/g, ''));
+
+  orderItems.push({
+    productId: product._id,
+    quantity: item.quantity,
+    price: numericPrice, // store as number
+  });
+
+  storeTotal += numericPrice * item.quantity;
+}
+
 
       // Create order for this store
       const order = await this.orderModel.create({

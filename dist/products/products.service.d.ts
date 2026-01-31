@@ -16,7 +16,7 @@ type LeanProduct = {
     description?: string;
     images?: string[];
     quantity: number;
-    price: number;
+    price: string;
     category?: string;
     offers: LeanOffer[];
 };
@@ -69,7 +69,7 @@ export declare class ProductsService {
         description?: string;
         images?: string[];
         quantity: number;
-        price: number;
+        price: string;
         category?: string;
         offers: LeanOffer[];
     }>;
@@ -84,12 +84,13 @@ export declare class ProductsService {
         description?: string;
         images?: string[];
         quantity: number;
-        price: number;
+        price: string;
         category?: string;
         offers: LeanOffer[];
     }[]>;
     getStores(): Promise<Types.ObjectId[]>;
     getProductsByStore(storeId: string): Promise<LeanProduct[]>;
+    private toNumberPrice;
     private calculateFinalPrice;
 }
 export {};

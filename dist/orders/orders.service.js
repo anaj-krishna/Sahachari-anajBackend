@@ -51,12 +51,13 @@ let OrdersService = class OrdersService {
                 if (!product) {
                     throw new common_1.NotFoundException(`Product ${item.productId.toString()} not found`);
                 }
+                const numericPrice = Number(String(product.price).replace(/[^0-9.]/g, ''));
                 orderItems.push({
                     productId: product._id,
                     quantity: item.quantity,
-                    price: product.price,
+                    price: numericPrice,
                 });
-                storeTotal += product.price * item.quantity;
+                storeTotal += numericPrice * item.quantity;
             }
             const order = await this.orderModel.create({
                 userId: new mongoose_2.Types.ObjectId(userId),

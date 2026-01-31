@@ -82,7 +82,7 @@ __decorate([
 ], Product.prototype, "quantity", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], Product.prototype, "price", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),

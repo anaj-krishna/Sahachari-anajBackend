@@ -105,23 +105,27 @@ let ProductsService = class ProductsService {
             .find({ storeId: new mongoose_2.Types.ObjectId(storeId) })
             .lean();
     }
+    toNumberPrice(price) {
+        return Number(String(price || '').replace(/[^0-9.]/g, '')) || 0;
+    }
     calculateFinalPrice(product) {
+        const basePrice = this.toNumberPrice(product.price);
         if (!product.offers || product.offers.length === 0) {
-            return product.price;
+            return basePrice;
         }
         const now = new Date();
         const activeOffer = product.offers.find((offer) => offer.isActive &&
             (!offer.startDate || offer.startDate <= now) &&
             (!offer.endDate || offer.endDate >= now));
         if (!activeOffer)
-            return product.price;
+            return basePrice;
         if (activeOffer.type === product_schema_1.DiscountType.PERCENTAGE) {
-            return Math.max(product.price - (product.price * activeOffer.value) / 100, 0);
+            return Math.max(basePrice - (basePrice * activeOffer.value) / 100, 0);
         }
         if (activeOffer.type === product_schema_1.DiscountType.FLAT) {
-            return Math.max(product.price - activeOffer.value, 0);
+            return Math.max(basePrice - activeOffer.value, 0);
         }
-        return product.price;
+        return basePrice;
     }
 };
 exports.ProductsService = ProductsService;
