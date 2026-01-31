@@ -17,7 +17,7 @@ export declare class CustomerController {
         description?: string;
         images?: string[];
         quantity: number;
-        price: number;
+        price: string;
         category?: string;
         offers: {
             type: import("../../products/product.schema").DiscountType;
@@ -35,7 +35,7 @@ export declare class CustomerController {
         description?: string;
         images?: string[];
         quantity: number;
-        price: number;
+        price: string;
         category?: string;
         offers: {
             type: import("../../products/product.schema").DiscountType;
@@ -53,7 +53,7 @@ export declare class CustomerController {
         description?: string;
         images?: string[];
         quantity: number;
-        price: number;
+        price: string;
         category?: string;
         offers: {
             type: import("../../products/product.schema").DiscountType;

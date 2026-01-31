@@ -19,6 +19,8 @@ class RegisterDto {
     serviceablePincodes;
     password;
     role;
+    address2;
+    mobileNumber;
 }
 exports.RegisterDto = RegisterDto;
 __decorate([
@@ -48,4 +50,14 @@ __decorate([
     (0, class_validator_1.IsEnum)(role_enum_1.Role),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "role", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RegisterDto.prototype, "address2", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RegisterDto.prototype, "mobileNumber", void 0);
 //# sourceMappingURL=register.dto.js.map

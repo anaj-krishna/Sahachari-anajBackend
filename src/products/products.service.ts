@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -22,7 +24,7 @@ type LeanProduct = {
   description?: string;
   images?: string[];
   quantity: number;
-  price: number;
+  price: string;
   category?: string;
   offers: LeanOffer[];
 };
@@ -156,34 +158,38 @@ export class ProductsService {
   }
 
   /* ================= HELPERS ================= */
+private toNumberPrice(price: string | number): number {
+  return Number(String(price || '').replace(/[^0-9.]/g, '')) || 0;
+}
 
-  private calculateFinalPrice(product: LeanProduct): number {
-    if (!product.offers || product.offers.length === 0) {
-      return product.price;
-    }
 
-    const now = new Date();
+ private calculateFinalPrice(product: LeanProduct): number {
+  const basePrice = this.toNumberPrice(product.price);
 
-    const activeOffer = product.offers.find(
-      (offer) =>
-        offer.isActive &&
-        (!offer.startDate || offer.startDate <= now) &&
-        (!offer.endDate || offer.endDate >= now),
-    );
-
-    if (!activeOffer) return product.price;
-
-    if (activeOffer.type === DiscountType.PERCENTAGE) {
-      return Math.max(
-        product.price - (product.price * activeOffer.value) / 100,
-        0,
-      );
-    }
-
-    if (activeOffer.type === DiscountType.FLAT) {
-      return Math.max(product.price - activeOffer.value, 0);
-    }
-
-    return product.price;
+  if (!product.offers || product.offers.length === 0) {
+    return basePrice;
   }
+
+  const now = new Date();
+
+  const activeOffer = product.offers.find(
+    (offer) =>
+      offer.isActive &&
+      (!offer.startDate || offer.startDate <= now) &&
+      (!offer.endDate || offer.endDate >= now),
+  );
+
+  if (!activeOffer) return basePrice;
+
+  if (activeOffer.type === DiscountType.PERCENTAGE) {
+    return Math.max(basePrice - (basePrice * activeOffer.value) / 100, 0);
+  }
+
+  if (activeOffer.type === DiscountType.FLAT) {
+    return Math.max(basePrice - activeOffer.value, 0);
+  }
+
+  return basePrice;
+}
+
 }

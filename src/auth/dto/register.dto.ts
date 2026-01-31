@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   IsString,
   IsEmail,
@@ -5,6 +6,7 @@ import {
   IsArray,
   IsEnum,
   ArrayNotEmpty,
+  IsOptional, // Use this for optional fields
 } from 'class-validator';
 import { Role } from '../../common/enums/role.enum';
 
@@ -28,5 +30,15 @@ export class RegisterDto {
   password: string;
 
   @IsEnum(Role)
-  role: Role; // USER | ADMIN | DELIVERY
-}
+  role: Role;
+
+  // FIX: Use @IsOptional instead of passing required: false
+  @IsOptional()
+  @IsString()
+  address2?: string;
+
+  // FIX: Remove @Prop (Mongoose only) and use validator decorators
+  @IsOptional()
+  @IsString()
+  mobileNumber?: string;
+} 

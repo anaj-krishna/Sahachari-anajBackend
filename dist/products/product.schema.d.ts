@@ -16,7 +16,7 @@ export declare class Product {
     description?: string;
     images?: string[];
     quantity: number;
-    price: number;
+    price: string;
     category?: string;
     offers: Offer[];
 }
@@ -85,7 +85,7 @@ export declare const ProductSchema: import("mongoose").Schema<Product, import("m
     }, "id"> & {
         id: string;
     }> | undefined;
-    price?: import("mongoose").SchemaDefinitionProperty<number, Product, Document<unknown, {}, Product, {
+    price?: import("mongoose").SchemaDefinitionProperty<string, Product, Document<unknown, {}, Product, {
         id: string;
     }, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & Omit<Product & {
         _id: Types.ObjectId;

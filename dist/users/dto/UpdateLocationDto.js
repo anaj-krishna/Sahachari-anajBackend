@@ -9,42 +9,34 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateProductDto = void 0;
+exports.UpdateLocationDto = void 0;
 const class_validator_1 = require("class-validator");
-class CreateProductDto {
-    name;
-    description;
-    images;
-    quantity;
-    price;
-    category;
+class UpdateLocationDto {
+    address;
+    address2;
+    mobileNumber;
+    serviceablePincodes;
 }
-exports.CreateProductDto = CreateProductDto;
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateProductDto.prototype, "name", void 0);
+exports.UpdateLocationDto = UpdateLocationDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateProductDto.prototype, "description", void 0);
+], UpdateLocationDto.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateLocationDto.prototype, "address2", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateLocationDto.prototype, "mobileNumber", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
     __metadata("design:type", Array)
-], CreateProductDto.prototype, "images", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], CreateProductDto.prototype, "quantity", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", String)
-], CreateProductDto.prototype, "price", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateProductDto.prototype, "category", void 0);
-//# sourceMappingURL=create-product.dto.js.map
+], UpdateLocationDto.prototype, "serviceablePincodes", void 0);
+//# sourceMappingURL=UpdateLocationDto.js.map
